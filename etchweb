@@ -1,0 +1,42 @@
+#!/usr/bin/python
+import libetchweb
+import tkinter as tk
+
+def writemsg(*args,
+             sep: str = " ",
+             end: str = "\n",
+             enforce_no_print: bool = True) -> None:
+    libetchweb.tools.writemsg(*args,
+                              sep=sep,
+                              end=end,
+                              enforce_no_print=enforce_no_print)
+
+tables = libetchweb.settings.read.read_setting_file()
+settings_table = libetchweb.settings.read.get_dict_by_dict_list(tables,
+                                                                "SETTINGS")
+
+libetchweb.tools.OUTPUT = settings_table.get('output')
+if libetchweb.tools.OUTPUT == "default":
+    libetchweb.tools.OUTPUT = None
+else:
+    if libetchweb.tools.OUTPUT is not None:
+        libetchweb.tools.OUTPUT = open(libetchweb.tools.OUTPUT, "w")
+libetchweb.tools.PRINT = settings_table.get('log')
+
+writemsg("-------- Welcome to etchweb! --------")
+writemsg("[window] Creating window")
+
+root = tk.Tk()
+root.title("Etchweb")
+root.geometry("400x300")
+
+if settings_table.get('darkmode'):
+    writemsg("[window] Dark mode is enabled!")
+    root.configure(bg='#1e1e1e')
+else:
+    writemsg("[window] Light mode is enabled!")
+    root.configure(bg="#f6f6f6")
+
+writemsg("[window] Starting mainloop")
+
+root.mainloop()
